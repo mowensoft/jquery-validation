@@ -3,7 +3,7 @@
 	"homepage": "http://jqueryvalidation.org/",
 	"repository": {
 		"type": "git",
-		"url": "git://github.com/jzaefferer/jquery-validation.git"
+		"url": "https://github.com/mowensoft/jquery-validation.git"
 	},
 	"authors": [
 		"Jörn Zaefferer <joern.zaefferer@gmail.com>"
