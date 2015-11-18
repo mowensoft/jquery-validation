@@ -141,7 +141,14 @@ grunt.initConfig( {
 		}
 	},
 	jscs: {
-		all: [ "<%= jshint.core.src %>", "<%= jshint.test.src %>", "<%= jshint.grunt.src %>" ]
+		all: {
+		    files: {
+		        src: [ "<%= jshint.core.src %>", "<%= jshint.test.src %>", "<%= jshint.grunt.src %>" ]
+		    },
+            options: {
+                force: true
+            }
+		}
 	},
 	copy: {
 		dist: {

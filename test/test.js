@@ -701,10 +701,10 @@ asyncTest( "option invalidHandler", function() {
 	$( "#testForm1clean" ).submit();
 } );
 
-test( "findByName()", function() {
+test( "findBy()", function() {
 	deepEqual(
 		new $.validator( {}, document.getElementById( "form" ) )
-			.findByName( document.getElementById( "radio1" ).name )
+			.findBy( document.getElementById( "radio1" ).name )
 			.get(),
 		$( "#form" ).find( "[name=radio1]" ).get()
 	);

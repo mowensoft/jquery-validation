@@ -117,11 +117,11 @@ $.extend( $.fn, {
 	rules: function( command, argument ) {
 		var element = this[ 0 ],
 			settings, staticRules, existingRules, data, param, filtered;
-			
-		var elementName = $.validator.getIdentifierFor( element );
 
 		if ( command ) {
-			settings = $.data( element.form, "validator" ).settings;
+            var validatorObj = $.data( element.form, "validator" );
+		    var elementName = validatorObj.getIdentifierFor( element );
+			settings = validatorObj.settings;
 			staticRules = settings.rules;
 			existingRules = $.validator.staticRules( element );
 			switch ( command ) {
@@ -562,9 +562,10 @@ $.extend( $.validator, {
 		},
 
 		findLastActive: function() {
-			var lastActive = this.lastActive;
+            var self = this;
+		    var lastActive = this.lastActive;
 			return lastActive && $.grep( this.errorList, function( n ) {
-				return this.getIdentifierFor( n.element ) === this.getIdentifierFor( lastActive );
+				return self.getIdentifierFor( n.element ) === self.getIdentifierFor( lastActive );
 			} ).length === 1 && lastActive;
 		},
 
@@ -578,7 +579,7 @@ $.extend( $.validator, {
 			.not( ":submit, :reset, :image, :disabled" )
 			.not( this.settings.ignore )
 			.filter( function() {
-				var name = this.name || $( this ).attr( "name" ); // For contenteditable
+				var name = validator.getIdentifierFor( this ) || $( this ).attr( "name" ); // For contenteditable
 				if ( !name && validator.settings.debug && window.console ) {
 					console.error( "%o has no name assigned", this );
 				}
@@ -922,9 +923,7 @@ $.extend( $.validator, {
 		},
 
 		idOrName: function( element ) {
-			return this.groups[ this.getIdentifierFor( element ) ] || ( this.checkable( element ) 
-				? this.getIdentifierFor( element ) 
-				: element.id || this.getIdentifierFor( element ) );
+			return this.groups[ this.getIdentifierFor( element ) ] || ( this.checkable( element ) ? this.getIdentifierFor( element ) : element.id || this.getIdentifierFor( element ) );
 		},
 
 		validationTargetFor: function( element ) {
@@ -945,10 +944,13 @@ $.extend( $.validator, {
 		findBy: function( name ) {
 			return $( this.currentForm ).find( "[" + this.settings.identifierAttribute + "='" + this.escapeCssMeta( name ) + "']" );
 		},
-		
+
 		getIdentifierFor: function( element ) {
-			return element.getAttribute( this.settings.identifierAttribute );
-		}
+			if ( element && element.hasAttribute && element.hasAttribute( this.settings.identifierAttribute ) ) {
+				return element.getAttribute( this.settings.identifierAttribute );
+			}
+			return element.name;
+		},
 
 		getLength: function( value, element ) {
 			switch ( element.nodeName.toLowerCase() ) {
@@ -1137,7 +1139,7 @@ $.extend( $.validator, {
 			validator = $.data( element.form, "validator" );
 
 		if ( validator.settings.rules ) {
-			rules = $.validator.normalizeRule( validator.settings.rules[ this.getIdentifierFor( element ) ] ) || {};
+			rules = $.validator.normalizeRule( validator.settings.rules[ validator.getIdentifierFor( element ) ] ) || {};
 		}
 		return rules;
 	},
